@@ -1,0 +1,13 @@
+# A anon key é pública por design e PRECISA ser publicada para o app funcionar
+# no GitHub Pages — por isso config.js NÃO está ignorado aqui.
+# O que nunca pode entrar no repositório:
+.env
+.env.*
+*service_role*
+*.secret
+segredos.*
+
+# Lixo de sistema
+Thumbs.db
+desktop.ini
+.DS_Store
