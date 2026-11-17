@@ -4,10 +4,16 @@
 import { createClient } from 'supabase';
 import { hojeISO, semAcento } from './util.js';
 
+const CONFIG_PADRAO = { cadencia_padrao_dias: 180, janela_dias: 30 };
+
 export function criarAdaptadorSupabase({ url, chave }) {
   const sb = createClient(url, chave, {
     auth: { persistSession: true, autoRefreshToken: true },
   });
+
+  // A tela Hoje pede a config duas vezes no mesmo instante (direto e dentro
+  // de agenda()). Guardar a resposta evita a ida dupla ao servidor.
+  let cacheConfig = null;
 
   const ok = ({ data, error }) => {
     if (error) throw new Error(error.message);
@@ -34,6 +40,7 @@ export function criarAdaptadorSupabase({ url, chave }) {
     },
 
     async sair() {
+      cacheConfig = null;
       await sb.auth.signOut();
     },
 
@@ -185,15 +192,26 @@ export function criarAdaptadorSupabase({ url, chave }) {
       ok(await sb.from('tag').delete().eq('id', id));
     },
 
+    // Ler NUNCA escreve. A versao anterior criava a linha de config no
+    // primeiro acesso, e como a tela Hoje chama isso duas vezes em paralelo,
+    // os dois inserts corriam juntos e um morria com "duplicate key value
+    // violates unique constraint config_pkey". Sem linha no banco, o padrao
+    // vale em memoria — e o proprio v_pessoa ja faz coalesce(..., 180).
     async obterConfig() {
+      if (cacheConfig) return cacheConfig;
       const atual = ok(await sb.from('config').select('*').maybeSingle());
-      if (atual) return atual;
-      return ok(await sb.from('config').insert({}).select().single());
+      cacheConfig = atual ?? { ...CONFIG_PADRAO, owner_id: null };
+      return cacheConfig;
     },
 
+    // A linha so nasce aqui, quando voce muda um ajuste de verdade.
     async salvarConfig(c) {
-      const atual = await this.obterConfig();
-      return ok(await sb.from('config').update(c).eq('owner_id', atual.owner_id).select().single());
+      const { data } = await sb.auth.getUser();
+      const linha = { ...CONFIG_PADRAO, ...(cacheConfig || {}), ...c, owner_id: data.user.id };
+      cacheConfig = ok(await sb.from('config')
+        .upsert(linha, { onConflict: 'owner_id' })
+        .select().single());
+      return cacheConfig;
     },
   };
 }
