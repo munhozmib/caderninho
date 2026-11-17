@@ -100,14 +100,13 @@ hierarquia: área e empresa mudam o tempo todo, e quem organiza isso são as
 **tags**, que são planas, renomeáveis e funcionam igual para quem é de fora.
 
 **`fato`** é o coração. Tudo que você sabe sobre alguém entra num fluxo só, com
-quatro tipos:
+três tipos:
 
 | tipo | o que é | exemplo |
 |---|---|---|
 | `nota` | fato sem data | "casada com o Rafael, professor de história" |
 | `data` | data que importa, repete todo ano | "Pedro, filho" + 05/12/2020 |
-| `pendencia` | algo que **eu** devo | "prometi mandar o artigo" |
-| `gancho` | razão para procurar | "ia começar um MBA" |
+| `pendencia` | algo em aberto da minha parte | "prometi mandar o artigo", "perguntar do MBA" |
 
 Datas guardam **a data**, nunca a idade — o app calcula "5 anos" na hora em que
 você abre a ficha. Idade anotada à mão apodrece em doze meses e vira gafe.
@@ -120,8 +119,8 @@ registro só, ligado aos três.
 ## A tela que justifica o app
 
 **Hoje** não é uma lista de cobranças. Ela mostra *razões* para procurar
-alguém — uma data chegando, uma promessa em aberto, um gancho que ficou da
-última conversa. Só no fim, discreto, vem o "faz muito tempo", com padrão de
+alguém — uma data chegando, algo que ficou em aberto da última conversa.
+Só no fim, discreto, vem o "faz muito tempo", com padrão de
 **180 dias**: fraco de propósito, porque procurar gente sem motivo é o jeito
 mais rápido de virar chato.
 

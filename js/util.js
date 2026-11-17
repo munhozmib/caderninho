@@ -121,7 +121,6 @@ export const ROTULO_TIPO = {
   nota: 'fato',
   data: 'data',
   pendencia: 'eu devo',
-  gancho: 'gancho',
 };
 
 export const CANAIS = ['conversa', 'almoço', 'café', 'ligação', 'mensagem', 'e-mail', 'evento'];

@@ -23,8 +23,7 @@ export function Hoje() {
   if (erro) return html`<${Erro}>${erro}<//>`;
 
   const { agenda, abertos, frios, cfg } = dados;
-  const pendencias = abertos.filter((f) => f.tipo === 'pendencia');
-  const ganchos = abertos.filter((f) => f.tipo === 'gancho');
+  const pendencias = abertos;
   const nada = !agenda.length && !abertos.length;
 
   const falei = async (pessoaId) => {
@@ -81,28 +80,6 @@ export function Hoje() {
               <div class="acoes">
                 <button class="btn pequeno" onClick=${async () => { await store.alternarFato(f.id); recarregar(); }}>
                   resolvi
-                </button>
-              </div>
-            </div>
-          </div>
-        `)}
-      <//>
-    `}
-
-    ${ganchos.length > 0 && html`
-      <${Card} titulo="Ganchos de conversa">
-        ${ganchos.map((f) => html`
-          <div class="razao" key=${f.id}>
-            <div class="selo">💡</div>
-            <div class="corpo">
-              <a class="nome" href=${`#/pessoa/${f.pessoa.id}`}>${f.pessoa.nome}</a>
-              <p>${f.texto}</p>
-              <div class="acoes">
-                <button class="btn pequeno" onClick=${() => ir(`#/registrar?p=${f.pessoa.id}`)}>
-                  registrar conversa
-                </button>
-                <button class="btn pequeno" onClick=${async () => { await store.alternarFato(f.id); recarregar(); }}>
-                  já usei
                 </button>
               </div>
             </div>

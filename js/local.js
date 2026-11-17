@@ -84,7 +84,7 @@ function semente() {
   f(helena, 'nota', 'Casada com o Rafael, que é professor de história');
   f(helena, 'data', 'Pedro, filho', { quando: aniversarioDaqui(19, 6), anual: true });
   f(helena, 'nota', 'Corre maratona. Fez a de Porto Alegre esse ano');
-  f(helena, 'gancho', 'Falou que ia começar um MBA em análise de dados');
+  f(helena, 'pendencia', 'Perguntar como foi a inscrição no MBA de análise de dados');
   conversa([helena], diasAFrente(-23), 'almoço', 'Contou do MBA e reclamou da reorganização da área. Perguntou se eu conhecia alguém de dados.');
 
   const joaquim = p('Joaquim Vieira', {
@@ -142,7 +142,7 @@ function ultimaDe(pessoaId) {
 function enriquecer(p) {
   const ultima = ultimaDe(p.id);
   const abertos = bd().fatos.filter(
-    (f) => f.pessoa_id === p.id && ['pendencia', 'gancho'].includes(f.tipo) && !f.resolvido_em
+    (f) => f.pessoa_id === p.id && f.tipo === 'pendencia' && !f.resolvido_em
   ).length;
   return {
     ...p,
@@ -296,10 +296,9 @@ export const adaptadorLocal = {
 
   async abertos() {
     return bd().fatos
-      .filter((f) => ['pendencia', 'gancho'].includes(f.tipo) && !f.resolvido_em)
+      .filter((f) => f.tipo === 'pendencia' && !f.resolvido_em)
       .map((f) => ({ ...f, pessoa: bd().pessoas.find((p) => p.id === f.pessoa_id) }))
-      .filter((f) => f.pessoa && !f.pessoa.arquivado)
-      .sort((a, b) => (a.tipo === b.tipo ? 0 : a.tipo === 'pendencia' ? -1 : 1));
+      .filter((f) => f.pessoa && !f.pessoa.arquivado);
   },
 
   async frios() {

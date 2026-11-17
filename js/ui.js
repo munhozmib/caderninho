@@ -74,12 +74,10 @@ export const CORES_TIPO = {
   nota: '',
   data: 'azul',
   pendencia: 'rosa',
-  gancho: 'ambar',
 };
 
 export const ICONES_TIPO = {
   nota: '•',
   data: '🎂',
   pendencia: '↩',
-  gancho: '💡',
 };

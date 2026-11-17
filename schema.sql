@@ -26,17 +26,16 @@ create table if not exists pessoa (
 -- O coração do caderninho: tudo que eu sei sobre a pessoa, num fluxo só.
 -- 'nota'      — fato sem data ("torce pro Palmeiras", "esposa Carla")
 -- 'data'      — data que importa ("Helena, filha" + 12/03/2019 → o app calcula a idade)
--- 'pendencia' — eu devo algo ("prometi mandar o artigo")
--- 'gancho'    — razão para procurar ("ia prestar concurso em março")
+-- 'pendencia' — eu devo algo ("prometi mandar o artigo", "ia começar um MBA: perguntar")
 create table if not exists fato (
     id           uuid primary key default gen_random_uuid(),
     owner_id     uuid not null default auth.uid() references auth.users(id) on delete cascade,
     pessoa_id    uuid not null references pessoa(id) on delete cascade,
-    tipo         text not null check (tipo in ('nota','data','pendencia','gancho')),
+    tipo         text not null check (tipo in ('nota','data','pendencia')),
     texto        text not null,
     quando       date,                                    -- data do fato / prazo da pendência
     anual        boolean not null default false,          -- repete todo ano (aniversários)
-    resolvido_em date,                                    -- pendência ou gancho já resolvido
+    resolvido_em date,                                    -- pendência já cumprida
     criado_em    timestamptz not null default now()
 );
 
@@ -164,7 +163,7 @@ left join lateral (
 left join lateral (
     select count(*) as abertos
     from fato f
-    where f.pessoa_id = p.id and f.tipo in ('pendencia','gancho') and f.resolvido_em is null
+    where f.pessoa_id = p.id and f.tipo = 'pendencia' and f.resolvido_em is null
 ) a on true;
 
 -- Toda data que vem aí: aniversário da pessoa + datas anuais dos fatos.

@@ -139,11 +139,9 @@ export function criarAdaptadorSupabase({ url, anonKey }) {
     async abertos() {
       const dados = ok(await sb.from('fato')
         .select('*, pessoa:pessoa_id(id, nome, arquivado)')
-        .in('tipo', ['pendencia', 'gancho'])
+        .eq('tipo', 'pendencia')
         .is('resolvido_em', null));
-      return (dados || [])
-        .filter((f) => f.pessoa && !f.pessoa.arquivado)
-        .sort((a, b) => (a.tipo === b.tipo ? 0 : a.tipo === 'pendencia' ? -1 : 1));
+      return (dados || []).filter((f) => f.pessoa && !f.pessoa.arquivado);
     },
 
     async frios() {

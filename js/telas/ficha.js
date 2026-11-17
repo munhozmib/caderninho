@@ -26,8 +26,8 @@ export function Ficha({ id }) {
 
   const { pessoa, fatos, interacoes } = dados;
   const sabidos = fatos.filter((f) => ['nota', 'data'].includes(f.tipo));
-  const abertos = fatos.filter((f) => ['pendencia', 'gancho'].includes(f.tipo) && !f.resolvido_em);
-  const fechados = fatos.filter((f) => ['pendencia', 'gancho'].includes(f.tipo) && f.resolvido_em);
+  const abertos = fatos.filter((f) => f.tipo === 'pendencia' && !f.resolvido_em);
+  const fechados = fatos.filter((f) => f.tipo === 'pendencia' && f.resolvido_em);
 
   const adicionar = async (e) => {
     e.preventDefault();
@@ -86,8 +86,7 @@ export function Ficha({ id }) {
       </p>
       ${pessoa.nascimento && html`
         <p style="margin:0 0 6px">
-          Aniversário: ${dCurto(pessoa.nascimento)} · ${pessoa.idade} anos ·
-          ${emDias(diasEntre(hojeISO(), proximaOcorrencia(pessoa.nascimento)))}
+          Aniversário: ${dCurto(pessoa.nascimento)} · ${pessoa.idade} anos · ${emDias(diasEntre(hojeISO(), proximaOcorrencia(pessoa.nascimento)))}
         </p>
       `}
       ${pessoa.onde_conheci && html`<p style="margin:0" class="sub">Nos conhecemos: ${pessoa.onde_conheci}</p>`}
@@ -129,7 +128,7 @@ export function Ficha({ id }) {
 
       <form onSubmit=${adicionar} style="margin-top:14px">
         <div class="filtros" style="padding-bottom:8px">
-          ${['nota', 'data', 'pendencia', 'gancho'].map((t) => html`
+          ${['nota', 'data', 'pendencia'].map((t) => html`
             <button type="button" key=${t} class=${novo.tipo === t ? 'ativo' : ''}
                     onClick=${() => setNovo({ ...novo, tipo: t })}>
               ${ICONES_TIPO[t]} ${ROTULO_TIPO[t]}
@@ -207,7 +206,7 @@ export function Encontro({ id }) {
   const ultima = interacoes[0];
   const datas = fatos.filter((f) => f.tipo === 'data' && f.quando);
   const notas = fatos.filter((f) => f.tipo === 'nota');
-  const abertos = fatos.filter((f) => ['pendencia', 'gancho'].includes(f.tipo) && !f.resolvido_em);
+  const abertos = fatos.filter((f) => f.tipo === 'pendencia' && !f.resolvido_em);
 
   return html`
     <h2 class="tela">${pessoa.tratamento || pessoa.nome}</h2>
