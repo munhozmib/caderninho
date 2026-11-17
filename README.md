@@ -85,19 +85,25 @@ esconder.
 
 ---
 
-## Publicar no GitHub Pages
+## Publicado
+
+**https://munhozmib.github.io/caderninho/**
+
+Repositório: https://github.com/munhozmib/caderninho (público; o Pages só
+publica de repo público no plano Free). Nada de pessoal mora aqui — as
+anotações ficam no Supabase, atrás do seu login e do RLS.
+
+Publicar uma mudança é isso, e só isso:
 
 ```bash
-cd C:\Projetos\caderninho
-git init && git add . && git commit -m "primeiro caderninho"
-git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/caderninho.git
-git push -u origin main
+git add . && git commit -m "o que mudou" && git push
 ```
 
-Depois, no GitHub: *Settings* → *Pages* → Source: `Deploy from a branch`,
-branch `main`, pasta `/ (root)`. Em um ou dois minutos o app está em
-`https://SEU-USUARIO.github.io/caderninho/`.
+Um ou dois minutos depois está no ar. Não há build para quebrar.
+
+**Atenção ao service worker:** ele serve a versão guardada primeiro e busca a
+nova em segundo plano. Na prática, depois de um push a primeira abertura ainda
+mostra a versão antiga e a segunda já mostra a nova. Não é bug.
 
 **No celular:** abra essa URL no Chrome → menu (⋮) → *Adicionar à tela inicial*.
 Ele instala como app, abre em tela cheia e o login fica guardado — você entra
