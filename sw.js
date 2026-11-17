@@ -48,6 +48,11 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;  // Supabase e afins: sempre rede
 
+  // config.js nunca entra no cache. É o arquivo que diz com qual banco falar:
+  // se um dia você trocar de projeto, uma cópia velha guardada aqui mandaria o
+  // app para o lugar errado, e descobrir isso levaria horas.
+  if (url.pathname.endsWith("/config.js")) return;
+
   e.respondWith(
     caches.open(VERSAO).then(async (cache) => {
       const guardado = await cache.match(req);
