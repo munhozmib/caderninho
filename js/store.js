@@ -5,6 +5,7 @@ import { adaptadorLocal } from './local.js';
 
 let loja = adaptadorLocal;
 let motivoLocal = 'config.js ausente';
+let falhaGrave = null; // config.js preenchido + Supabase que não sobe
 
 export async function iniciarLoja() {
   let cfg = null;
@@ -23,7 +24,10 @@ export async function iniciarLoja() {
     const { criarAdaptadorSupabase } = await import('./supa.js');
     loja = criarAdaptadorSupabase(cfg);
   } catch (e) {
-    motivoLocal = `falha ao carregar o Supabase: ${e.message}`;
+    // Config apontando para o Supabase e o Supabase sem subir: cair no modo
+    // local aqui seria mentir. O app pára e diz o que houve.
+    falhaGrave = e.message || String(e);
+    motivoLocal = `falha ao carregar o Supabase: ${falhaGrave}`;
   }
   return loja;
 }
@@ -34,6 +38,7 @@ export const store = new Proxy(
     get(_alvo, prop) {
       if (prop === 'modo') return loja.modo;
       if (prop === 'motivoLocal') return motivoLocal;
+      if (prop === 'falhaGrave') return falhaGrave;
       const v = loja[prop];
       return typeof v === 'function' ? v.bind(loja) : v;
     },

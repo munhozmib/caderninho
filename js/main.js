@@ -2,7 +2,7 @@
 
 import { render } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
-import { html, ir } from './ui.js';
+import { html, ir, Card } from './ui.js';
 import { store, iniciarLoja } from './store.js';
 import { Hoje } from './telas/hoje.js';
 import { Pessoas, FormPessoa } from './telas/pessoas.js';
@@ -43,6 +43,25 @@ function App() {
   }, []);
 
   if (!pronto) return html`<p class="carregando">abrindo o caderninho…</p>`;
+
+  if (store.falhaGrave) {
+    return html`
+      <div class="tela-erro">
+        <h2 class="tela">Não consegui falar com o Supabase</h2>
+        <${Card}>
+          <p>
+            O <code>config.js</code> aponta para um projeto, mas a biblioteca do
+            Supabase não carregou. <strong>Nada foi lido nem salvo.</strong>
+          </p>
+          <p class="sub">${store.falhaGrave}</p>
+          <p class="sub">
+            Para voltar ao modo local de propósito, apague os valores do
+            <code>config.js</code>. Assim você sabe em qual dos dois está.
+          </p>
+        <//>
+      </div>
+    `;
+  }
 
   if (store.modo === 'supabase' && !usuario) {
     return html`<${Login} aoEntrar=${async () => setUsuario((await store.sessao()).usuario)} />`;

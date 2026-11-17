@@ -1,7 +1,7 @@
 """Confere se o RLS esta de pe.
 
-Usa SO a chave publica (publishable key, a mesma que vai no site) e tenta ler tudo
-sem estar logado. Se qualquer tabela ou view devolver dados, o teste falha:
+Usa SO a chave publica (publishable key, a mesma que vai no site) e tenta ler
+tudo — e depois escrever — sem estar logado. Se qualquer tabela ou view devolver dados, o teste falha:
 e exatamente assim que um vazamento aconteceria na vida real.
 
     python -I ferramentas/testar_rls.py
@@ -41,13 +41,38 @@ def consultar(url, chave, alvo):
         return e.code, e.read().decode()[:160]
 
 
+def tentar_escrever(url, chave):
+    """Tenta INSERIR uma pessoa sem login. Tem que ser recusado.
+
+    Ler 0 linhas de uma tabela vazia nao prova nada. Uma escrita recusada
+    prova: o RLS esta de pe mesmo sem dados para esconder.
+    """
+    corpo = json.dumps({'nome': 'TESTE DE INVASAO - apague se aparecer'}).encode()
+    req = urllib.request.Request(
+        f'{url}/rest/v1/pessoa',
+        data=corpo,
+        headers={
+            'apikey': chave,
+            'Authorization': f'Bearer {chave}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation',
+        },
+        method='POST',
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.status, r.read().decode()[:200]
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode()[:200]
+
+
 def main():
     url, chave = ler_config()
     if not url or not chave:
         print('config.js ainda esta em branco. Preencha url e chave primeiro.')
         return 2
 
-    print(f'Testando {url} com a anon key, SEM login.\n')
+    print(f'Testando {url} com a chave publica, SEM login.\n')
     falhas = []
     for alvo in ALVOS:
         status, corpo = consultar(url, chave, alvo)
@@ -58,13 +83,20 @@ def main():
         if vazou:
             falhas.append(alvo)
 
+    status, detalhe = tentar_escrever(url, chave)
+    escreveu = status in (200, 201)
+    print(f"  {'ESCREVEU' if escreveu else 'ok   '}  {'insert sem login':18s} HTTP {status}")
+    if escreveu:
+        falhas.append('pessoa (INSERT)')
+        print(f'     resposta: {detalhe}')
+
     print()
     if falhas:
         print('FALHOU. Estas tabelas respondem sem login: ' + ', '.join(falhas))
         print('Rode schema.sql de novo e confira o Security Advisor do Supabase.')
         return 1
 
-    print('Passou: nada e legivel sem estar logado.')
+    print('Passou: nada e legivel nem gravavel sem estar logado.')
     return 0
 
 

@@ -9,6 +9,6 @@
 // Enquanto estiver em branco, o app roda em modo local (localStorage).
 
 export default {
-  url: '',
-  chave: '',
+  url: 'https://wdbkeznskbjulovcegun.supabase.co',
+  chave: 'sb_publishable_UqVyFJ2KqZPfKiVXtOpDMg_hTdq26PO',
 };

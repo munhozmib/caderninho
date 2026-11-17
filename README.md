@@ -11,10 +11,14 @@ RLS, não a interface.
 
 ## Como está agora
 
-O app **já funciona** em modo local: os dados ficam no `localStorage` do
-navegador, com quatro pessoas de exemplo para você ver o formato. Nada sai da
-máquina. Quando você preencher o `config.js`, ele passa a falar com o Supabase
-e os dados viram seus, em qualquer aparelho.
+O `config.js` já aponta para o projeto do Supabase, então o app abre pedindo
+login. Se você apagar os dois valores de lá, ele volta ao modo local
+(`localStorage`, quatro pessoas de exemplo, nada sai da máquina) — útil para
+mexer no layout sem tocar nos dados de verdade.
+
+Não existe meio-termo silencioso: se o `config.js` estiver preenchido e o
+Supabase não subir, o app pára e diz isso, em vez de mostrar dados locais
+fingindo que está na nuvem.
 
 Para abrir aqui no PC:
 
@@ -73,9 +77,11 @@ ignora o RLS inteiro.
 python -I ferramentas/testar_rls.py
 ```
 
-O script tenta ler as dez tabelas e views com a chave pública, sem login, e só passa
-se todas negarem. É o teste que pega o erro número um do Supabase: tabela ou
-view sem RLS.
+O script usa só a chave pública, sem login, e faz duas coisas: tenta ler as dez
+tabelas e views, e tenta **inserir** uma pessoa. Tem que ser recusado nas duas
+pontas. A escrita importa: ler zero linhas de uma tabela vazia não prova nada,
+mas um insert recusado prova que o RLS está de pé mesmo sem dados para
+esconder.
 
 ---
 
@@ -154,6 +160,7 @@ js/
   ui.js             peças de interface
   telas/            hoje, pessoas, ficha, outras
 vendor/             preact, htm e supabase-js como arquivos locais
+  node-buffer.js    stub: o bundle do supabase pede o Buffer do Node
 ferramentas/
   testar_rls.py     tenta vazar os dados e falha se conseguir
   gerar_icones.py   gera os PNGs do PWA
