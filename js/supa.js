@@ -4,8 +4,8 @@
 import { createClient } from 'supabase';
 import { hojeISO, semAcento } from './util.js';
 
-export function criarAdaptadorSupabase({ url, anonKey }) {
-  const sb = createClient(url, anonKey, {
+export function criarAdaptadorSupabase({ url, chave }) {
+  const sb = createClient(url, chave, {
     auth: { persistSession: true, autoRefreshToken: true },
   });
 

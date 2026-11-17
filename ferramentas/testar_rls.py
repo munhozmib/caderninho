@@ -1,6 +1,6 @@
 """Confere se o RLS esta de pe.
 
-Usa SO a anon key (a chave publica, a mesma que vai no site) e tenta ler tudo
+Usa SO a chave publica (publishable key, a mesma que vai no site) e tenta ler tudo
 sem estar logado. Se qualquer tabela ou view devolver dados, o teste falha:
 e exatamente assim que um vazamento aconteceria na vida real.
 
@@ -25,7 +25,7 @@ def ler_config():
     with open(caminho, encoding='utf-8') as f:
         texto = f.read()
     url = re.search(r"url:\s*'([^']*)'", texto)
-    chave = re.search(r"anonKey:\s*'([^']*)'", texto)
+    chave = re.search(r"chave:\s*'([^']*)'", texto)
     return (url.group(1) if url else ''), (chave.group(1) if chave else '')
 
 
@@ -44,7 +44,7 @@ def consultar(url, chave, alvo):
 def main():
     url, chave = ler_config()
     if not url or not chave:
-        print('config.js ainda esta em branco. Preencha url e anonKey primeiro.')
+        print('config.js ainda esta em branco. Preencha url e chave primeiro.')
         return 2
 
     print(f'Testando {url} com a anon key, SEM login.\n')

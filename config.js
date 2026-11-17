@@ -1,11 +1,14 @@
-// Preencha com os dados do seu projeto no Supabase e faça commit deste arquivo.
-// Enquanto estiver em branco, o app roda em modo local (localStorage).
+// Supabase → Settings:
+//   Integrations → Data API ....... Project URL
+//   Configuration → API Keys ...... Publishable key (sb_publishable_...)
 //
-// Supabase → Project Settings → API: "Project URL" e a chave "anon public".
-// A anon key é pública de propósito — quem protege os dados é o RLS, no banco.
-// NUNCA coloque aqui a service_role key: ela ignora o RLS inteiro.
+// A publishable key é a sucessora da anon key: pública de propósito, ela só
+// identifica o projeto. Quem decide o que pode ser lido ou escrito é o RLS, no
+// banco. NUNCA ponha aqui a secret key (sb_secret_...): ela ignora o RLS.
+//
+// Enquanto estiver em branco, o app roda em modo local (localStorage).
 
 export default {
   url: '',
-  anonKey: '',
+  chave: '',
 };

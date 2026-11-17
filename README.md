@@ -46,19 +46,26 @@ criar conta no seu projeto.
 **3. Criar o seu usuário.** *Authentication* → *Users* → *Add user* → e-mail e
 senha, marcando "Auto Confirm User". Esse é o único login que vai existir.
 
-**4. Apontar o app.** *Project Settings* → *API*: copie a **Project URL** e a
-chave **anon public** para o `config.js`:
+**4. Apontar o app.** Duas coisas, em duas páginas diferentes do *Settings*:
+
+- *Integrations* → *Data API* → **Project URL**
+  (é sempre `https://<ref>.supabase.co`, onde `<ref>` é aquele pedaço da URL do
+  painel: `supabase.com/dashboard/project/<ref>/...`)
+- *Configuration* → *API Keys* → **Publishable key**, a que começa com
+  `sb_publishable_`
 
 ```js
 export default {
   url: 'https://xxxxxxxx.supabase.co',
-  anonKey: 'eyJhbGci...',
+  chave: 'sb_publishable_...',
 };
 ```
 
-A anon key é pública de propósito e **deve** ser commitada — sem ela o site no
-Pages não funciona. Ela não dá acesso a nada: quem decide é o RLS. A chave que
-nunca pode sair do painel é a **service_role**, que ignora o RLS inteiro.
+A publishable key é a sucessora da anon key — mesmo papel, mesmo nível de
+privilégio. Ela é pública de propósito e **deve** ser commitada: sem ela o site
+no Pages não funciona. Não dá acesso a nada sozinha — quem decide é o RLS.
+A que nunca pode sair do painel é a **secret key** (`sb_secret_...`), que
+ignora o RLS inteiro.
 
 **5. Conferir que está fechado.**
 
@@ -66,7 +73,7 @@ nunca pode sair do painel é a **service_role**, que ignora o RLS inteiro.
 python -I ferramentas/testar_rls.py
 ```
 
-O script tenta ler as dez tabelas e views com a anon key, sem login, e só passa
+O script tenta ler as dez tabelas e views com a chave pública, sem login, e só passa
 se todas negarem. É o teste que pega o erro número um do Supabase: tabela ou
 view sem RLS.
 

@@ -14,7 +14,7 @@ export async function iniciarLoja() {
     return loja; // sem config.js → modo local, sem drama
   }
 
-  if (!cfg?.url || !cfg?.anonKey) {
+  if (!cfg?.url || !cfg?.chave) {
     motivoLocal = 'config.js incompleto';
     return loja;
   }
